@@ -4,308 +4,288 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tag for Social Media Preview Image -->
-    <!-- This URL is the raw image file needed for LinkedIn and other social media sites. -->
     <meta property="og:image" content="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/data_analyst_thumbnail.jpg" />
+    <meta property="og:description" content="A data analyst portfolio showcasing skills in Python, SQL, and Machine Learning. Turning complex data into actionable business insights." />
     <title>Waihenya Josphat - Data Analyst</title>
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js CDN for the 3D background animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
+            font-family: 'Poppins', sans-serif;
+            background-color: #0c0c1e;
+            color: #e0e0f0;
+            scroll-behavior: smooth;
         }
 
-        /* CNN animation canvas background */
-        #cnn-canvas {
+        /* Full-screen sections with scrolling snap */
+        .section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 2rem;
+            position: relative;
+            z-index: 10; /* Above the canvas */
+        }
+        
+        /* Three.js canvas for 3D particles */
+        #three-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 0.25; /* Slightly increased opacity for more visibility */
+            z-index: 0;
+            opacity: 0.3; /* Adjusted opacity for subtlety */
         }
 
-        /* Custom animation for a smooth fade-in effect */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        /* Style for the main container to center it */
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: rgba(13, 17, 23, 0.7); /* Semi-transparent background */
-            padding: 1.5rem;
+        /* Custom scroll indicator animation */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 1.5s infinite;
         }
 
-        /* Basic transition for smoother UI changes */
-        .section-content {
-            display: none;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Fade-in animation for content on scroll */
+        .animate-on-scroll {
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
 
-        .section-content.active {
-            display: block;
+        .animate-on-scroll.in-view {
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Custom styling for skill cards */
+        .skill-card {
+            background-color: rgba(30, 30, 50, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            border: 1px solid rgba(120, 120, 180, 0.3);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
-    <!-- The canvas for the CNN animation -->
-    <canvas id="cnn-canvas"></canvas>
+<body class="bg-[#0c0c1e] text-[#e0e0f0]">
 
-    <div class="main-container">
-        <!-- Main content card -->
-        <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl p-8 md:p-12 border border-gray-700 animate-fade-in">
-            <!-- Header and Navigation -->
-            <header class="text-center mb-10">
-                <!-- Profile photo -->
-                <div class="flex justify-center mb-4">
-                    <!-- This URL is the raw image file for the website to display. -->
-                    <img class="w-24 h-24 rounded-full border-4 border-gray-700 shadow-lg" src="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/data_analyst_thumbnail.jpg" alt="Waihenya Josphat's professional headshot">
-                </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-1 tracking-wider">Waihenya Josphat</h1>
-                <p class="text-xl md:text-2xl text-gray-400 font-light">Data Analyst</p>
-                <nav class="mt-8 flex flex-wrap justify-center gap-4">
-                    <button id="about-btn" class="nav-btn bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">About</button>
-                    <button id="skills-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Skills</button>
-                    <button id="projects-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Projects</button>
-                    <button id="contact-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Contact</button>
-                </nav>
-            </header>
-            
-            <!-- About Section -->
-            <div id="about-section" class="section-content active">
-                <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Professional Summary</h2>
-                <p class="text-gray-300 leading-relaxed mb-4">
-                    Results-oriented Data Analyst with a Master's in Data Analytics and expertise in SQL, Python, APIs, and advanced machine learning. Proven success in managing the full data project lifecycle, from ETL and data cleansing to visualization and advanced statistical analysis. Adept at leveraging platforms like Snowflake for scalable analytics and translating complex data into actionable business insights.
-                </p>
-                <p class="text-gray-300 leading-relaxed">
-                    A highly analytical and results-driven professional with a strong track record of applying quantitative and qualitative methods to solve complex business problems.
-                </p>
-            </div>
+    <!-- Three.js Canvas for 3D background -->
+    <canvas id="three-canvas"></canvas>
 
-            <!-- Skills Section -->
-            <div id="skills-section" class="section-content">
-                <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Core Skills & Tools</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300">
-                    <div>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><span class="font-semibold">Programming & Data Analysis:</span> Python (Pandas, NumPy, Scikit-learn), R, SQL</li>
-                            <li><span class="font-semibold">Databases & Cloud:</span> Snowflake, PostgreSQL, MySQL, MongoDB</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><span class="font-semibold">Data Visualization & BI:</span> Tableau, Power BI, Matplotlib, Seaborn</li>
-                            <li><span class="font-semibold">Data Management:</span> ETL, Forecasting, API Integration, Web Analytics</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-20 bg-[#0c0c1e] bg-opacity-70 backdrop-filter backdrop-blur-sm p-4 shadow-lg">
+        <ul class="flex justify-center md:gap-8 gap-4 text-sm md:text-base font-semibold">
+            <li><a href="#about" class="text-blue-400 hover:text-blue-300 transition-colors">About</a></li>
+            <li><a href="#skills" class="hover:text-blue-300 transition-colors">Skills</a></li>
+            <li><a href="#projects" class="hover:text-blue-300 transition-colors">Projects</a></li>
+            <li><a href="#contact" class="hover:text-blue-300 transition-colors">Contact</a></li>
+        </ul>
+    </nav>
 
-            <!-- Projects Section -->
-            <div id="projects-section" class="section-content">
-                <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Key Projects</h2>
-                <div class="space-y-6 text-gray-300">
-                    <div>
-                        <h3 class="font-semibold text-lg">Auto Volt System – Automotive Analytics Platform</h3>
-                        <p class="text-gray-300">
-                            Spearheaded the design of an analytics platform using React.js, Django, and PostgreSQL. Implemented predictive analytics in Python to forecast future appointments, optimizing resource allocation.
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-lg">Sales Forecasting with Machine Learning</h3>
-                        <p class="text-gray-300">
-                            Built a Python-based model to predict sales, achieving an improved forecasting accuracy of 85%. Supported demand planning and cut inventory shortages by 12%.
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-lg">Academic Library Data Migration</h3>
-                        <p class="text-gray-300">
-                            Led a data migration project that improved SQL query performance by 30%. Designed ETL workflows for efficient data transformation and integrity.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contact Section -->
-            <div id="contact-section" class="section-content">
-                <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Get in Touch</h2>
-                <ul class="list-disc list-inside space-y-2 text-gray-300">
-                    <li><a href="https://www.linkedin.com/in/josphat-waihenya-19b456234" target="_blank" class="text-blue-400 hover:underline">LinkedIn Profile</a></li>
-                    <li><a href="https://github.com/your-github-profile" target="_blank" class="text-blue-400 hover:underline">GitHub Profile</a></li>
-                </ul>
-            </div>
-
+    <!-- Hero Section -->
+    <section id="about" class="section text-center">
+        <div class="animate-on-scroll flex flex-col items-center">
+            <img class="w-28 h-28 md:w-40 md:h-40 rounded-full border-4 border-blue-400 shadow-xl mb-6" src="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/data_analyst_thumbnail.jpg" alt="Waihenya Josphat's professional headshot">
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">Waihenya Josphat</h1>
+            <p class="text-xl md:text-3xl font-light text-blue-300 mt-2">Data Analyst</p>
+            <p class="mt-8 text-lg max-w-2xl leading-relaxed text-[#c0c0d0]">
+                Results-oriented Data Analyst with a Master's in Data Analytics and expertise in SQL, Python, APIs, and advanced machine learning. Proven success in managing the full data project lifecycle, from ETL and data cleansing to visualization and advanced statistical analysis. Adept at leveraging platforms like Snowflake for scalable analytics and translating complex data into actionable business insights.
+            </p>
         </div>
-    </div>
+        <div class="scroll-indicator animate-on-scroll">
+            <svg class="w-8 h-8 md:w-10 md:h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 tracking-wide text-blue-400 animate-on-scroll">Core Skills</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 animate-on-scroll">
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">🐍</span>
+                    <p class="font-semibold text-lg">Python</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">📊</span>
+                    <p class="font-semibold text-lg">SQL</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">🧠</span>
+                    <p class="font-semibold text-lg">Machine Learning</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">📈</span>
+                    <p class="font-semibold text-lg">Tableau</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">❄️</span>
+                    <p class="font-semibold text-lg">Snowflake</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">🔗</span>
+                    <p class="font-semibold text-lg">APIs</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">🧹</span>
+                    <p class="font-semibold text-lg">Data Cleansing</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">📦</span>
+                    <p class="font-semibold text-lg">ETL</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">🌐</span>
+                    <p class="font-semibold text-lg">Web Analytics</p>
+                </div>
+                <div class="skill-card p-6 flex flex-col items-center">
+                    <span class="text-5xl mb-2">💻</span>
+                    <p class="font-semibold text-lg">R</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-10 tracking-wide text-blue-400 text-center animate-on-scroll">Key Projects</h2>
+            <div class="space-y-8 max-w-3xl mx-auto animate-on-scroll">
+                <div class="bg-[#1e1e32] p-6 rounded-2xl border border-[#7878b4] shadow-lg">
+                    <h3 class="text-2xl font-semibold text-blue-300">Auto Volt System – Automotive Analytics Platform</h3>
+                    <p class="mt-2 text-[#c0c0d0] leading-relaxed">
+                        Spearheaded the design of an analytics platform using React.js, Django, and PostgreSQL. Implemented predictive analytics in Python to forecast future appointments, optimizing resource allocation.
+                    </p>
+                </div>
+                <div class="bg-[#1e1e32] p-6 rounded-2xl border border-[#7878b4] shadow-lg">
+                    <h3 class="text-2xl font-semibold text-blue-300">Sales Forecasting with Machine Learning</h3>
+                    <p class="mt-2 text-[#c0c0d0] leading-relaxed">
+                        Built a Python-based model to predict sales, achieving an improved forecasting accuracy of 85%. Supported demand planning and cut inventory shortages by 12%.
+                    </p>
+                </div>
+                <div class="bg-[#1e1e32] p-6 rounded-2xl border border-[#7878b4] shadow-lg">
+                    <h3 class="text-2xl font-semibold text-blue-300">Academic Library Data Migration</h3>
+                    <p class="mt-2 text-[#c0c0d0] leading-relaxed">
+                        Led a data migration project that improved SQL query performance by 30%. Designed ETL workflows for efficient data transformation and integrity.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container mx-auto text-center animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 tracking-wide text-blue-400">Get in Touch</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                <a href="https://www.linkedin.com/in/josphat-waihenya-19b456234" target="_blank" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-10 rounded-full shadow-lg transition-colors duration-300">LinkedIn Profile</a>
+                <a href="https://github.com/your-github-profile" target="_blank" class="w-full md:w-auto bg-gray-700 hover:bg-gray-600 text-white font-semibold py-4 px-10 rounded-full shadow-lg transition-colors duration-300">GitHub Profile</a>
+            </div>
+        </div>
+    </section>
 
     <script>
-        // JavaScript to handle section visibility and button states
+        // --- Three.js Background Animation ---
         window.onload = function() {
-            const sections = {
-                'about-btn': 'about-section',
-                'skills-btn': 'skills-section',
-                'projects-btn': 'projects-section',
-                'contact-btn': 'contact-section'
-            };
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const contentSections = document.querySelectorAll('.section-content');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas') });
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-            function showSection(sectionId) {
-                // Hide all sections and remove active class from buttons
-                contentSections.forEach(section => {
-                    section.classList.remove('active');
-                });
-                navButtons.forEach(button => {
-                    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                    button.classList.add('bg-gray-700', 'hover:bg-gray-600');
-                });
+            // Create particle system
+            const particleCount = 2000;
+            const particles = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
 
-                // Show the selected section and apply active style to its button
-                const selectedSection = document.getElementById(sectionId);
-                if (selectedSection) {
-                    selectedSection.classList.add('active');
-                }
-                const selectedButton = document.querySelector(`#${Object.keys(sections).find(key => sections[key] === sectionId)}`);
-                if (selectedButton) {
-                    selectedButton.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                    selectedButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                }
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 100;
+                positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = (Math.random() - 0.5) * 100;
+
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.1 + 0.5, 0.5, 0.5); // HSL for blueish-purple tones
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
             }
 
-            // Add click event listeners to the navigation buttons
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const sectionId = sections[button.id];
-                    showSection(sectionId);
-                });
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
             });
 
-            // Show the about section by default
-            showSection('about-section');
-        };
+            const particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
 
-        // --- CNN Animation Script ---
-        const canvas = document.getElementById('cnn-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let elements = [];
-        const maxElements = 80; // Increased element count
+            camera.position.z = 5;
 
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+            // Animate loop
+            function animate() {
+                requestAnimationFrame(animate);
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 0.7 - 0.35; // Increased speed
-                this.speedY = Math.random() * 0.7 - 0.35; // Increased speed
-                this.color = 'rgba(255, 255, 255, 0.8)';
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                
-                if (this.x > width || this.x < 0) this.speedX *= -1;
-                if (this.y > height || this.y < 0) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+                // Rotate particle system
+                particleSystem.rotation.x += 0.0001;
+                particleSystem.rotation.y += 0.0002;
 
-        class Block {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 12 + 6; // Increased size
-                this.speedX = Math.random() * 0.7 - 0.35; // Increased speed
-                this.speedY = Math.random() * 0.7 - 0.35; // Increased speed
-                this.color = 'rgba(100, 200, 255, 0.8)'; // Increased opacity
-                this.pulse = 0;
-                this.pulseDirection = 1;
+                renderer.render(scene, camera);
             }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+            animate();
 
-                if (this.x > width || this.x < 0) this.speedX *= -1;
-                if (this.y > height || this.y < 0) this.speedY *= -1;
-
-                this.pulse += 0.05 * this.pulseDirection;
-                if (this.pulse > 1 || this.pulse < 0) {
-                    this.pulseDirection *= -1;
-                }
-            }
-            draw() {
-                const effectiveSize = this.size * (1 + this.pulse * 0.2); // Pulse effect
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x - effectiveSize / 2, this.y - effectiveSize / 2, effectiveSize, effectiveSize);
-            }
-        }
-        
-        function init() {
-            for (let i = 0; i < maxElements; i++) {
-                if (Math.random() > 0.5) {
-                    elements.push(new Particle());
-                } else {
-                    elements.push(new Block());
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            elements.forEach(element => {
-                element.update();
-                element.draw();
+            // Handle window resizing
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            for (let a = 0; a < elements.length; a++) {
-                for (let b = a; b < elements.length; b++) {
-                    const dx = elements[a].x - elements[b].x;
-                    const dy = elements[a].y - elements[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 120) { // Increased connection distance
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(100, 200, 255, ${1 - distance / 120})`;
-                        ctx.lineWidth = 0.7; // Increased line width
-                        ctx.moveTo(elements[a].x, elements[a].y);
-                        ctx.lineTo(elements[b].x, elements[b].y);
-                        ctx.stroke();
+            // Handle scroll animations
+            const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Optional: Unobserve after first animation to save resources
+                        // observer.unobserve(entry.target);
+                    } else {
+                        // Optional: Remove class if out of view to re-animate on scroll
+                        entry.target.classList.remove('in-view');
                     }
-                }
-            }
+                });
+            }, { threshold: 0.1 });
 
-            requestAnimationFrame(animate);
-        }
-
-        init();
-        animate();
+            elementsToAnimate.forEach(element => observer.observe(element));
+        };
     </script>
 </body>
 </html>
