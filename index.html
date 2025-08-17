@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph Meta Tag for Social Media Preview Image -->
+    <meta property="og:image" content="https://placehold.co/1200x630/0d1117/c9d1d9?text=Data+Analyst+Portfolio" />
     <title>Waihenya Josphat - Data Analyst</title>
     <style>
         /* Base styles for the page and canvas */
@@ -52,6 +54,37 @@
             margin-top: 0;
         }
 
+        /* A new section to display skills, hidden by default */
+        .skills-section {
+            display: none;
+            margin-top: 2rem;
+            font-size: 1rem;
+            text-align: left;
+            opacity: 0; /* Starts as invisible */
+            transition: opacity 1s ease-in-out;
+        }
+
+        .skills-section.active {
+            display: block;
+            opacity: 1; /* Fades in */
+        }
+
+        .skills-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .skills-list li {
+            margin-bottom: 0.5rem;
+        }
+
         /* Responsive design for smaller screens */
         @media (max-width: 768px) {
             .content-overlay h1 {
@@ -72,6 +105,17 @@
     <div class="content-overlay">
         <h1>Waihenya Josphat</h1>
         <p>Data Analyst</p>
+
+        <!-- A new section for skills and tools -->
+        <div id="skills-section" class="skills-section">
+            <h2>Core Skills & Tools</h2>
+            <ul class="skills-list">
+                <li>**Programming & Data Analysis:** Python (Pandas, NumPy, Scikit-learn), R, SQL</li>
+                <li>**Databases & Cloud:** Snowflake, PostgreSQL, MySQL</li>
+                <li>**Data Visualization:** Tableau, Power BI</li>
+                <li>**Projects:** ETL, Predictive Analytics, API Integration</li>
+            </ul>
+        </div>
     </div>
 
     <script>
@@ -173,6 +217,14 @@
             // Call the next frame
             requestAnimationFrame(animate);
         }
+
+        // Add a timer to fade in the skills section after a delay
+        window.addEventListener('load', () => {
+            const skillsSection = document.getElementById('skills-section');
+            setTimeout(() => {
+                skillsSection.classList.add('active');
+            }, 2000); // 2-second delay
+        });
 
         // Start the animation
         animate();
