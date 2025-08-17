@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waihenya Josphat - Data Analyst</title>
+    <style>
+        /* Base styles for the page and canvas */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #0d1117; /* Dark background similar to GitHub's */
+            color: #c9d1d9; /* Light text color */
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Puts the canvas behind other content */
+        }
+
+        /* Styles for the content overlay */
+        .content-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 2rem 3rem;
+            background: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px);
+            max-width: 90%;
+        }
+
+        .content-overlay h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .content-overlay p {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-top: 0;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .content-overlay h1 {
+                font-size: 2rem;
+            }
+            .content-overlay p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- This is the canvas where the animation will be drawn -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- This is the overlay content to display your name and title -->
+    <div class="content-overlay">
+        <h1>Waihenya Josphat</h1>
+        <p>Data Analyst</p>
+    </div>
+
+    <script>
+        // Get the canvas element and 2D rendering context
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions to window size and add a resize listener
+        let width, height;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Particle parameters for the animation
+        const numParticles = 100;
+        const particles = [];
+        const maxLineDistance = 150; // Max distance for lines to be drawn between particles
+        const particleSpeed = 0.5; // Controls how fast particles move
+
+        // Particle class definition
+        class Particle {
+            constructor() {
+                // Initial position
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+
+                // Initial velocity and direction
+                this.velocity = {
+                    x: (Math.random() - 0.5) * particleSpeed,
+                    y: (Math.random() - 0.5) * particleSpeed
+                };
+            }
+
+            // Method to draw the particle
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(201, 209, 217, 0.8)';
+                ctx.fill();
+            }
+
+            // Method to update the particle's position
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+
+                // Bounce off walls
+                if (this.x < 0 || this.x > width) {
+                    this.velocity.x *= -1;
+                }
+                if (this.y < 0 || this.y > height) {
+                    this.velocity.y *= -1;
+                }
+            }
+        }
+
+        // Function to create all particles
+        function createParticles() {
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+        createParticles();
+
+        // Main animation loop
+        function animate() {
+            // Clear the canvas on each frame
+            ctx.clearRect(0, 0, width, height);
+
+            // Loop through each particle
+            for (let i = 0; i < particles.length; i++) {
+                const particle1 = particles[i];
+                particle1.update();
+                particle1.draw();
+
+                // Check distance to all other particles and draw lines
+                for (let j = i + 1; j < particles.length; j++) {
+                    const particle2 = particles[j];
+                    const dx = particle1.x - particle2.x;
+                    const dy = particle1.y - particle2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // If particles are close, draw a line between them
+                    if (distance < maxLineDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particle1.x, particle1.y);
+                        ctx.lineTo(particle2.x, particle2.y);
+                        // The opacity of the line fades with distance
+                        ctx.strokeStyle = `rgba(201, 209, 217, ${1 - distance / maxLineDistance})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Call the next frame
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation
+        animate();
+    </script>
+</body>
+</html>
