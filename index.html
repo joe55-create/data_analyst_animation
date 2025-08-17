@@ -5,13 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Open Graph Meta Tag for Social Media Preview Image -->
     <!-- This URL is the raw image file needed for LinkedIn and other social media sites. -->
-    <meta property="og:image" content="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/1750131385606.jpg" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/download%20(1).png" />
     <title>Waihenya Josphat - Data Analyst</title>
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        /* CNN animation canvas background */
+        #cnn-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.25; /* Slightly increased opacity for more visibility */
         }
 
         /* Custom animation for a smooth fade-in effect */
@@ -29,8 +42,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #0d1117;
-            background-image: radial-gradient(at 10% 20%, rgb(40, 44, 52), rgb(29, 31, 36));
+            background: rgba(13, 17, 23, 0.7); /* Semi-transparent background */
             padding: 1.5rem;
         }
 
@@ -50,6 +62,8 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
+    <!-- The canvas for the CNN animation -->
+    <canvas id="cnn-canvas"></canvas>
 
     <div class="main-container">
         <!-- Main content card -->
@@ -59,7 +73,7 @@
                 <!-- Profile photo -->
                 <div class="flex justify-center mb-4">
                     <!-- This URL is the raw image file for the website to display. -->
-                    <img class="w-24 h-24 rounded-full border-4 border-gray-700 shadow-lg" src="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/1750131385606.jpg" alt="Waihenya Josphat's professional headshot">
+                    <img class="w-24 h-24 rounded-full border-4 border-gray-700 shadow-lg" src="https://raw.githubusercontent.com/joe55-create/data_analyst_animation/main/download%20(1).png" alt="Waihenya Josphat's professional headshot">
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-1 tracking-wider">Waihenya Josphat</h1>
                 <p class="text-xl md:text-2xl text-gray-400 font-light">Data Analyst</p>
@@ -106,24 +120,21 @@
                 <div class="space-y-6 text-gray-300">
                     <div>
                         <h3 class="font-semibold text-lg">Auto Volt System – Automotive Analytics Platform</h3>
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li>Spearheaded the design of an analytics platform using **React.js, Django, and PostgreSQL**.</li>
-                            <li>Implemented predictive analytics in **Python** to forecast future appointments, optimizing resource allocation.</li>
-                        </ul>
+                        <p class="text-gray-300">
+                            Spearheaded the design of an analytics platform using **React.js, Django, and PostgreSQL**. Implemented predictive analytics in **Python** to forecast future appointments, optimizing resource allocation.
+                        </p>
                     </div>
                     <div>
                         <h3 class="font-semibold text-lg">Sales Forecasting with Machine Learning</h3>
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li>Built a Python-based model to predict sales, achieving an improved **forecasting accuracy of 85%**.</li>
-                            <li>Supported demand planning and **cut inventory shortages by 12%**.</li>
-                        </ul>
+                        <p class="text-gray-300">
+                            Built a Python-based model to predict sales, achieving an improved **forecasting accuracy of 85%**. Supported demand planning and **cut inventory shortages by 12%**.
+                        </p>
                     </div>
                     <div>
                         <h3 class="font-semibold text-lg">Academic Library Data Migration</h3>
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li>Led a data migration project that **improved SQL query performance by 30%**.</li>
-                            <li>Designed **ETL workflows** for efficient data transformation and integrity.</li>
-                        </ul>
+                        <p class="text-gray-300">
+                            Led a data migration project that **improved SQL query performance by 30%**. Designed **ETL workflows** for efficient data transformation and integrity.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -175,6 +186,115 @@
             // Show the about section by default
             showSection('about-section');
         };
+
+        // --- CNN Animation Script ---
+        const canvas = document.getElementById('cnn-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let elements = [];
+        const maxElements = 80; // Increased element count
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.7 - 0.35; // Increased speed
+                this.speedY = Math.random() * 0.7 - 0.35; // Increased speed
+                this.color = 'rgba(255, 255, 255, 0.8)';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > width || this.x < 0) this.speedX *= -1;
+                if (this.y > height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Block {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 12 + 6; // Increased size
+                this.speedX = Math.random() * 0.7 - 0.35; // Increased speed
+                this.speedY = Math.random() * 0.7 - 0.35; // Increased speed
+                this.color = 'rgba(100, 200, 255, 0.8)'; // Increased opacity
+                this.pulse = 0;
+                this.pulseDirection = 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > width || this.x < 0) this.speedX *= -1;
+                if (this.y > height || this.y < 0) this.speedY *= -1;
+
+                this.pulse += 0.05 * this.pulseDirection;
+                if (this.pulse > 1 || this.pulse < 0) {
+                    this.pulseDirection *= -1;
+                }
+            }
+            draw() {
+                const effectiveSize = this.size * (1 + this.pulse * 0.2); // Pulse effect
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - effectiveSize / 2, this.y - effectiveSize / 2, effectiveSize, effectiveSize);
+            }
+        }
+        
+        function init() {
+            for (let i = 0; i < maxElements; i++) {
+                if (Math.random() > 0.5) {
+                    elements.push(new Particle());
+                } else {
+                    elements.push(new Block());
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            elements.forEach(element => {
+                element.update();
+                element.draw();
+            });
+
+            for (let a = 0; a < elements.length; a++) {
+                for (let b = a; b < elements.length; b++) {
+                    const dx = elements[a].x - elements[b].x;
+                    const dy = elements[a].y - elements[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) { // Increased connection distance
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(100, 200, 255, ${1 - distance / 120})`;
+                        ctx.lineWidth = 0.7; // Increased line width
+                        ctx.moveTo(elements[a].x, elements[a].y);
+                        ctx.lineTo(elements[b].x, elements[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
     </script>
 </body>
 </html>
