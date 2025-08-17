@@ -12,6 +12,16 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        /* Custom animation for a smooth fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
         /* Style for the main container to center it */
         .main-container {
             display: flex;
@@ -19,7 +29,8 @@
             align-items: center;
             min-height: 100vh;
             background-color: #0d1117;
-            padding: 1rem;
+            background-image: radial-gradient(at 10% 20%, rgb(40, 44, 52), rgb(29, 31, 36));
+            padding: 1.5rem;
         }
 
         /* Basic transition for smoother UI changes */
@@ -41,15 +52,19 @@
 
     <div class="main-container">
         <!-- Main content card -->
-        <div class="bg-gray-800 rounded-xl shadow-lg w-full max-w-4xl p-8 md:p-12">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl p-8 md:p-12 border border-gray-700 animate-fade-in">
             <!-- Header and Navigation -->
-            <header class="text-center mb-8">
-                <h1 class="text-4xl font-extrabold mb-1">Waihenya Josphat</h1>
-                <p class="text-xl text-gray-400 font-light">Data Analyst</p>
-                <nav class="mt-6 flex flex-wrap justify-center gap-4">
-                    <button id="about-btn" class="nav-btn bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300">About</button>
-                    <button id="skills-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300">Skills</button>
-                    <button id="projects-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300">Projects</button>
+            <header class="text-center mb-10">
+                <!-- Profile photo placeholder -->
+                <div class="flex justify-center mb-4">
+                    <img class="w-24 h-24 rounded-full border-4 border-gray-700 shadow-lg" src="https://placehold.co/96x96/4a5568/a0aec0?text=Your+Photo" alt="Profile photo placeholder">
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-1 tracking-wider">Waihenya Josphat</h1>
+                <p class="text-xl md:text-2xl text-gray-400 font-light">Data Analyst</p>
+                <nav class="mt-8 flex flex-wrap justify-center gap-4">
+                    <button id="about-btn" class="nav-btn bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">About</button>
+                    <button id="skills-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Skills</button>
+                    <button id="projects-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Projects</button>
                 </nav>
             </header>
             
