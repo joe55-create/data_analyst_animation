@@ -81,6 +81,7 @@
                     <button id="about-btn" class="nav-btn bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">About</button>
                     <button id="skills-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Skills</button>
                     <button id="projects-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Projects</button>
+                    <button id="contact-btn" class="nav-btn bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-colors duration-300 transform hover:-translate-y-1">Contact</button>
                 </nav>
             </header>
             
@@ -88,7 +89,7 @@
             <div id="about-section" class="section-content active">
                 <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Professional Summary</h2>
                 <p class="text-gray-300 leading-relaxed mb-4">
-                    Results-oriented Data Analyst with a Master's in Data Analytics and expertise in **SQL, Python, APIs, and advanced machine learning**. Proven success in managing the full data project lifecycle, from ETL and data cleansing to visualization and advanced statistical analysis. Adept at leveraging platforms like **Snowflake** for scalable analytics and translating complex data into actionable business insights.
+                    Results-oriented Data Analyst with a Master's in Data Analytics and expertise in SQL, Python, APIs, and advanced machine learning. Proven success in managing the full data project lifecycle, from ETL and data cleansing to visualization and advanced statistical analysis. Adept at leveraging platforms like Snowflake for scalable analytics and translating complex data into actionable business insights.
                 </p>
                 <p class="text-gray-300 leading-relaxed">
                     A highly analytical and results-driven professional with a strong track record of applying quantitative and qualitative methods to solve complex business problems.
@@ -139,6 +140,16 @@
                 </div>
             </div>
 
+            <!-- Contact Section -->
+            <div id="contact-section" class="section-content">
+                <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Get in Touch</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-300">
+                    <li><a href="mailto:joethumb/5@gmail.com" class="text-blue-400 hover:underline">Email: joethumb/5@gmail.com</a></li>
+                    <li><a href="https://www.linkedin.com/in/your-linkedin-profile" target="_blank" class="text-blue-400 hover:underline">LinkedIn Profile</a></li>
+                    <li><a href="https://github.com/your-github-profile" target="_blank" class="text-blue-400 hover:underline">GitHub Profile</a></li>
+                </ul>
+            </div>
+
         </div>
     </div>
 
@@ -148,7 +159,8 @@
             const sections = {
                 'about-btn': 'about-section',
                 'skills-btn': 'skills-section',
-                'projects-btn': 'projects-section'
+                'projects-btn': 'projects-section',
+                'contact-btn': 'contact-section'
             };
             const navButtons = document.querySelectorAll('.nav-btn');
             const contentSections = document.querySelectorAll('.section-content');
